@@ -29,6 +29,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login onAuthenticated={handleAuthenticationChange} />} />
           <Route path="/signup" element={<Signup onAuthenticated={handleAuthenticationChange} />} />
           <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
         </Routes>
       </Layout>
     </Router>
