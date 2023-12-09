@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Layout from './components/layout/Layout';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
+import AuthService from './services/AuthService';
 
-function App() {
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
+
+  useEffect(() => {
+    setIsAuthenticated(AuthService.isAuthenticated());
+  }, []);
+
+  const handleAuthenticationChange = (authenticated: boolean) => {
+    setIsAuthenticated(authenticated);
+  };
+
+  const handleLogout = () => {
+    AuthService.logout();
+    setIsAuthenticated(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Layout isAuthenticated={isAuthenticated} onLogout={handleLogout}>
+        <Routes>
+          <Route path="/login" element={<Login onAuthenticated={handleAuthenticationChange} />} />
+          <Route path="/signup" element={<Signup onAuthenticated={handleAuthenticationChange} />} />
+          <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
-}
+};
 
 export default App;
